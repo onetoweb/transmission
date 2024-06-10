@@ -173,7 +173,7 @@ class Client
     private function login(): void
     {
         // login request
-        $response = (new GuzzleCLient())->post(self::BASE_HREF.'/api/login', [
+        $response = (new GuzzleCLient())->post(self::BASE_HREF.'/login', [
             RequestOptions::FORM_PARAMS => [
                 'user' => $this->username,
                 'password' => $this->password,
