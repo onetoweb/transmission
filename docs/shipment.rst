@@ -90,6 +90,12 @@ Create shipment
         ],
         'labels' => 'PDF'
     ]);
+    
+    // store label
+    $filename = 'path/to/label.pdf';
+    $contents = base64_decode($results['data']['labels']['label_content']);
+    file_put_contents($filename, $contents);
+    
 
 
 Create shipment including dangerous goods
@@ -261,6 +267,11 @@ Create shipment including dangerous goods
         ],
         'labels' => 'zpl'
     ]);
+    
+    // store label
+    $filename = 'path/to/label.zpl';
+    $contents = base64_decode($results['data']['labels']['label_content']);
+    file_put_contents($filename, $contents);
 
 
 Finalize shipment
