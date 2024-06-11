@@ -92,10 +92,8 @@ Create shipment
     ]);
     
     // store label
-    $filename = 'path/to/label.pdf';
-    $contents = base64_decode($results['data']['labels']['label_content']);
-    file_put_contents($filename, $contents);
-    
+    $filename = '/path/to/label.pdf';
+    \Onetoweb\TransMission\Utils::storeLabel($filepath, $results);
 
 
 Create shipment including dangerous goods
@@ -269,9 +267,8 @@ Create shipment including dangerous goods
     ]);
     
     // store label
-    $filename = 'path/to/label.zpl';
-    $contents = base64_decode($results['data']['labels']['label_content']);
-    file_put_contents($filename, $contents);
+    $filepath = '/path/to/label.zpl';
+    \Onetoweb\TransMission\Utils::storeLabel($filepath, $results);
 
 
 Finalize shipment
