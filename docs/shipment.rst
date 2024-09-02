@@ -66,6 +66,7 @@ Create shipment
                 'unit_type' => 'COL',
                 'measurements' => [
                     'weight' => '22',
+                    'length' => '80',
                     'width' => '80',
                     'height' => '0',
                     'volume' => '0.0000',
