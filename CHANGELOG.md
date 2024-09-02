@@ -7,3 +7,7 @@
 ## [1.0.1] - 2024-06-11
 
  - Added Utils class with storeLabel method
+
+## [1.0.2] - 2024-09-02
+
+ - Added testmodus param
