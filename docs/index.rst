@@ -52,3 +52,4 @@ Examples
 * `Units <unit.rst>`_
 * `Services <service.rst>`_
 * `Shipments <shipment.rst>`_
+* `Customers <customer.rst>`_

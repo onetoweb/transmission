@@ -11,3 +11,7 @@
 ## [1.0.2] - 2024-09-02
 
  - Added testmodus param
+
+## [1.0.3] - 2024-09-02
+
+ - Added Customer Endpoint
