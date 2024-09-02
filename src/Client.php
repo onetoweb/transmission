@@ -16,7 +16,8 @@ class Client
     /**
      * Base href.
      */
-    public const BASE_HREF = 'https://staging.trans-mission.nl/api';
+    public const BASE_HREF_STAGING = 'https://staging.trans-mission.nl/api';
+    public const BASE_HREF_LIVE = 'https://api.trans-mission.nl/api';
     
     /**
      * Methods
@@ -37,6 +38,11 @@ class Client
     private $password;
     
     /**
+     * @var bool
+     */
+    private $testModus;
+    
+    /**
      * @var callable
      */
     private $updateTokenCallback;
@@ -49,11 +55,13 @@ class Client
     /**
      * @param string $username
      * @param string $password
+     * @param bool $testModus = true
      */
-    public function __construct(string $username, string $password)
+    public function __construct(string $username, string $password, bool $testModus = true)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->testModus = $testModus;
         
         // load endpoints
         $this->loadEndpoints();
@@ -115,13 +123,25 @@ class Client
     }
     
     /**
+     * @return string
+     */
+    public function getBaseHref(): string
+    {
+        if ($this->testModus) {
+            return self::BASE_HREF_STAGING;
+        } else {
+            return self::BASE_HREF_LIVE;
+        }
+    }
+    
+    /**
      * @param string $endpoint
      * 
      * @return string
      */
     public function getUrl(string $endpoint): string
     {
-        return self::BASE_HREF . '/' . ltrim($endpoint, '/');
+        return $this->getBaseHref() . '/' . ltrim($endpoint, '/');
     }
     
     /**
@@ -173,7 +193,7 @@ class Client
     private function login(): void
     {
         // login request
-        $response = (new GuzzleCLient())->post(self::BASE_HREF.'/login', [
+        $response = (new GuzzleCLient())->post($this->getUrl('/login'), [
             RequestOptions::FORM_PARAMS => [
                 'user' => $this->username,
                 'password' => $this->password,

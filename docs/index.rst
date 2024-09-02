@@ -17,9 +17,10 @@ Setup
     // params
     $username = '{username}';
     $password = '{password}';
+    $testModus = true;
     
     // setup client
-    $client = new Client($username, $password);
+    $client = new Client($username, $password, $testModus);
     
     // set update token callback to store token (optional)
     $client->setUpdateTokenCallback(function(Token $token) {
