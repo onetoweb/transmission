@@ -15,3 +15,7 @@
 ## [1.0.3] - 2024-09-02
 
  - Added Customer Endpoint
+
+## [1.0.4] - 2024-09-03
+
+ - Added get method to Customer Endpoint
