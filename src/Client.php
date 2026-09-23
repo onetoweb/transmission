@@ -3,9 +3,11 @@
 namespace Onetoweb\TransMission;
 
 use Onetoweb\TransMission\Endpoint\Endpoints;
+use Onetoweb\TransMission\Config\{Method, BaseHref};
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Client as GuzzleCLient;
 use DateTime;
+use Closure;
 
 /**
  * TransMission Api Client.
@@ -14,55 +16,30 @@ use DateTime;
 class Client
 {
     /**
-     * Base href.
+     * @var Closure|null
      */
-    public const BASE_HREF_STAGING = 'https://staging.trans-mission.nl/api';
-    public const BASE_HREF_LIVE = 'https://api.trans-mission.nl/api';
+    private ?Closure $updateTokenCallback = null;
     
     /**
-     * Methods
+     * @var Token|null
      */
-    public const METHOD_GET = 'GET';
-    public const METHOD_POST = 'POST';
-    public const METHOD_PUT = 'PUT';
-    public const METHOD_DELETE = 'DELETE';
-    
-    /**
-     * @var string
-     */
-    private $username;
-    
-    /**
-     * @var string
-     */
-    private $password;
-    
-    /**
-     * @var bool
-     */
-    private $testModus;
-    
-    /**
-     * @var callable
-     */
-    private $updateTokenCallback;
-    
-    /**
-     * @var Token
-     */
-    private $token;
+    private ?Token $token = null;
     
     /**
      * @param string $username
      * @param string $password
      * @param bool $testModus = true
      */
-    public function __construct(string $username, string $password, bool $testModus = true)
-    {
-        $this->username = $username;
-        $this->password = $password;
-        $this->testModus = $testModus;
+    public function __construct(
         
+        #[\SensitiveParameter]
+        private string $username,
+        
+        #[\SensitiveParameter]
+        private string $password,
+        
+        private bool $testModus = true
+    ) {
         // load endpoints
         $this->loadEndpoints();
     }
@@ -78,9 +55,9 @@ class Client
     }
     
     /**
-     * @param callable $updateTokenCallback
+     * @param Closure $updateTokenCallback
      */
-    public function setUpdateTokenCallback(callable $updateTokenCallback): void
+    public function setUpdateTokenCallback(Closure $updateTokenCallback): void
     {
         $this->updateTokenCallback = $updateTokenCallback;
     }
@@ -128,9 +105,9 @@ class Client
     public function getBaseHref(): string
     {
         if ($this->testModus) {
-            return self::BASE_HREF_STAGING;
+            return BaseHref::STAGING->value;
         } else {
-            return self::BASE_HREF_LIVE;
+            return BaseHref::LIVE->value;
         }
     }
     
@@ -152,7 +129,7 @@ class Client
      */
     public function get(string $endpoint, array $query = []): ?array
     {
-        return $this->request(self::METHOD_GET, $endpoint, [], $query);
+        return $this->request(Method::GET, $endpoint, [], $query);
     }
     
     /**
@@ -163,7 +140,7 @@ class Client
      */
     public function post(string $endpoint, array $data = []): ?array
     {
-        return $this->request(self::METHOD_POST, $endpoint, $data);
+        return $this->request(Method::POST, $endpoint, $data);
     }
     
     /**
@@ -174,7 +151,7 @@ class Client
      */
     public function put(string $endpoint, array $data = []): ?array
     {
-        return $this->request(self::METHOD_PUT, $endpoint, $data);
+        return $this->request(Method::PUT, $endpoint, $data);
     }
     
     /**
@@ -184,7 +161,7 @@ class Client
      */
     public function delete(string $endpoint): ?array
     {
-        return $this->request(self::METHOD_DELETE, $endpoint);
+        return $this->request(Method::DELETE, $endpoint);
     }
     
     /**
@@ -208,14 +185,14 @@ class Client
     }
     
     /**
-     * @param string $method
+     * @param Method $method
      * @param string $endpoint
      * @param array $data = []
      * @param array $query = []
      * 
      * @return ?array
      */
-    public function request(string $method, string $endpoint, array $data = [], array $query = []): ?array
+    public function request(Method $method, string $endpoint, array $data = [], array $query = []): ?array
     {
         if ($this->token === null or $this->token->isExpired()) {
             $this->login();
@@ -232,7 +209,7 @@ class Client
         ];
         
         // request
-        $response = (new GuzzleCLient())->request($method, $this->getUrl($endpoint), $options);
+        $response = (new GuzzleCLient())->request($method->value, $this->getUrl($endpoint), $options);
         
         // get contents
         $contents = $response->getBody()->getContents();
